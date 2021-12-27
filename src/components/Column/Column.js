@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Container, Draggable } from 'react-smooth-dnd';
-import { Dropdown, Form } from 'react-bootstrap';
+import { Dropdown, Form, Button } from 'react-bootstrap';
+import { cloneDeep } from 'lodash';
 
 import './Column.scss';
 
@@ -23,9 +24,17 @@ function Column(props) {
   };
 
   const [columnTitle, setColumnTitle] = useState('');
-  const handleColumnTitleChange = useCallback((e) => {
+  const handleColumnTitleChange = (e) =>
     setColumnTitle(e.target.value);
-  });
+
+  const [openNewCardForm, setOpenNewCardForm] = useState(false);
+  const toggleOpenNewCardForm = () =>
+    setOpenNewCardForm(!openNewCardForm);
+
+  const newCardTextAreaRef = useRef(null);
+
+  const [newCardTitle, setNewCardTitle] = useState('');
+  const onNewCardTitleChange = (e) => setNewCardTitle(e.target.value);
 
   useEffect(() => {
     setColumnTitle(column.title);
@@ -41,14 +50,43 @@ function Column(props) {
     toggleShowConfirmModal();
   };
 
-  const handleColumnTitleBlur = () => {
+  useEffect(() => {
+    if (newCardTextAreaRef && newCardTextAreaRef.current) {
+      newCardTextAreaRef.current.focus();
+      newCardTextAreaRef.current.select();
+    }
+  }, [openNewCardForm]);
+
+  function handleColumnTitleBlur() {
     const newColumn = {
       ...column,
       title: columnTitle,
     };
     onUpdateColumn(newColumn);
-  };
+  }
 
+  const addNewCard = () => {
+    if (!newCardTitle) {
+      newCardTextAreaRef.current.focus();
+      return;
+    }
+
+    const newCardToAdd = {
+      id: Math.random().toString(36).substr(2, 5),
+      boardId: column.boardId,
+      columnId: column.id,
+      title: newCardTitle.trim(),
+      cover: null,
+    };
+
+    let newColumn = cloneDeep(column);
+    newColumn.cards.push(newCardToAdd);
+    newColumn.cardOder.push(newCardToAdd.id);
+
+    onUpdateColumn(newColumn);
+    setNewCardTitle('');
+    toggleOpenNewCardForm();
+  };
   return (
     <div className='column'>
       <header className='column-drag-handle'>
@@ -119,11 +157,46 @@ function Column(props) {
             </Draggable>
           ))}
         </Container>
+        {openNewCardForm && (
+          <div className='add-new-card-area'>
+            <Form.Control
+              size='sm'
+              as='textarea'
+              rows='3'
+              placeholder='Enter a title for this card ...'
+              className='textarea-enter-new-card'
+              ref={newCardTextAreaRef}
+              value={newCardTitle}
+              onChange={onNewCardTitleChange}
+              onKeyDown={(event) =>
+                event.key === 'Enter' && addNewCard()
+              }
+            />
+          </div>
+        )}
       </div>
       <footer className=''>
-        <div className='footer-actions'>
-          <i className='fa fa-plus icon'> Add another card</i>
-        </div>
+        {openNewCardForm && (
+          <div className='add-new-card-actions'>
+            <Button variant='success' size='sm' onClick={addNewCard}>
+              Add card
+            </Button>
+            <span className='cancel-icon'>
+              <i
+                className='fa fa-trash icon'
+                onClick={toggleOpenNewCardForm}
+              />
+            </span>
+          </div>
+        )}
+        {!openNewCardForm && (
+          <div
+            className='footer-actions'
+            onClick={toggleOpenNewCardForm}
+          >
+            <i className='fa fa-plus icon'> Add another card</i>
+          </div>
+        )}
       </footer>
 
       <ConfirmModal
