@@ -16,7 +16,7 @@ import {
 
 function Column(props) {
   const { column, onCardDrop, onUpdateColumn } = props;
-  const cards = mapOder(column.cards, column.cardOder, 'id');
+  const cards = mapOder(column.cards, column.cardOder, '_id');
 
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const toggleShowConfirmModal = () => {
@@ -74,14 +74,14 @@ function Column(props) {
     const newCardToAdd = {
       id: Math.random().toString(36).substr(2, 5),
       boardId: column.boardId,
-      columnId: column.id,
+      columnId: column._id,
       title: newCardTitle.trim(),
       cover: null,
     };
 
     let newColumn = cloneDeep(column);
     newColumn.cards.push(newCardToAdd);
-    newColumn.cardOder.push(newCardToAdd.id);
+    newColumn.cardOder.push(newCardToAdd._id);
 
     onUpdateColumn(newColumn);
     setNewCardTitle('');
@@ -134,15 +134,15 @@ function Column(props) {
           //onDragStart={(e) => console.log('drag started', e)}
           //onDragEnd={(e) => console.log('drag end', e)}
           // onDragEnter={() => {
-          //   console.log('drag enter:', column.id);
+          //   console.log('drag enter:', column._id);
           // }}
           // onDragLeave={() => {
-          //   console.log('drag leave:', column.id);
+          //   console.log('drag leave:', column._id);
           // }}
           // onDropReady={(p) => console.log('Drop ready: ', p)}
           orientation='vertical' //default value: vertical
           groupName='duongdt-column'
-          onDrop={(dropResult) => onCardDrop(column.id, dropResult)}
+          onDrop={(dropResult) => onCardDrop(column._id, dropResult)}
           getChildPayload={(index) => cards[index]}
           dragClass='card-ghost'
           dropClass='card-ghost-drop'
