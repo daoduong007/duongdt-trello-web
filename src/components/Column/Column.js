@@ -200,7 +200,7 @@ function Column(props) {
             </Button>
             <span className='cancel-icon'>
               <i
-                className='fa fa-trash icon'
+                className='fa fa-window-close icon'
                 onClick={toggleOpenNewCardForm}
               />
             </span>

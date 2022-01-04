@@ -4,9 +4,80 @@ $appbar-bg-color: #0067;
 
 .navbar-app {
   height: $navbar-app-height;
-  padding-left: $gap;
+  padding: 0;
   display: flex;
   align-items: center;
   background-color: $appbar-bg-color;
-  font-size: 1.5rem;
+  color: #f0f8ff;
+  .duongdt-trello-container {
+    max-width: 100%;
+
+    .app-actions {
+      display: inline-flex;
+      height: 100%;
+      width: 100%;
+      flex-direction: row;
+      align-items: center;
+      font-size: 19px;
+
+      div.item {
+        padding: 9px;
+        background-color: rgba(255, 255, 255, 0.3);
+        border-radius: 3px;
+
+        &:not(:first-child) {
+          margin-left: 4px;
+        }
+        &:hover {
+          cursor: pointer;
+          background-color: rgba(255, 255, 255, 0.4);
+        }
+        &.search {
+          padding: 9px 0;
+          .group-search {
+            height: 18px;
+            .input-search {
+              max-height: 100%;
+              background-color: inherit;
+              color: inherit;
+              border: none;
+              font-size: 14px;
+              &::placeholder {
+                color: darken(#f0f8ff, 5);
+                opacity: 1;
+              }
+            }
+            .input-icon-search {
+              padding: 0 9px 0 0;
+              background-color: transparent;
+              border: none;
+              color: inherit;
+            }
+          }
+        }
+      }
+    }
+
+    .user-actions {
+      display: inline-flex;
+      height: 100%;
+      width: 100%;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-end;
+      font-size: 18px;
+
+      div.item {
+        padding: 9px;
+        background-color: rgba(255, 255, 255, 0.3);
+        border-radius: 3px;
+        margin-left: 4px;
+
+        &:hover {
+          cursor: pointer;
+          background-color: rgba(255, 255, 255, 0.4);
+        }
+      }
+    }
+  }
 }
