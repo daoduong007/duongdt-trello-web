@@ -16,6 +16,7 @@ import { mapOder } from 'utilities/sorts';
 import { applyDrag } from 'utilities/dragDrop';
 //data
 import { fetchBoardDetails } from 'actions/ApiCall';
+import { createNewColumn } from 'actions/ApiCall';
 
 function BoardContent() {
   const [board, setBoard] = useState({});
@@ -94,27 +95,26 @@ function BoardContent() {
       return;
     }
     const newColumnToAdd = {
-      id: Math.random().toString(36).substr(2, 5),
       boardId: board._id,
       title: newColumnTitle.trim(),
-      cardOder: [],
-      cards: [],
     };
+    //call api post
+    createNewColumn(newColumnToAdd).then((column) => {
+      let newColumns = [...columns];
+      newColumns.push(column);
 
-    let newColumns = [...columns];
-    newColumns.push(newColumnToAdd);
+      let newBoard = { ...board };
+      newBoard.columnOder = newColumns.map((c) => c._id);
+      newBoard.columns = newColumns;
 
-    let newBoard = { ...board };
-    newBoard.columnOder = newColumns.map((c) => c._id);
-    newBoard.columns = newColumns;
-
-    setColumns(newColumns);
-    setBoard(newBoard);
-    setNewColumnTitle('');
-    toggleOpenNewColumnForm();
+      setColumns(newColumns);
+      setBoard(newBoard);
+      setNewColumnTitle('');
+      toggleOpenNewColumnForm();
+    });
   };
 
-  const onUpdateColumn = (newColumnToUpdate) => {
+  const onUpdateColumnState = (newColumnToUpdate) => {
     const columnIdToUpdate = newColumnToUpdate._id;
 
     let newColumns = [...columns];
@@ -156,7 +156,7 @@ function BoardContent() {
             <Column
               column={column}
               onCardDrop={onCardDrop}
-              onUpdateColumn={onUpdateColumn}
+              onUpdateColumnState={onUpdateColumnState}
             />
           </Draggable>
         ))}

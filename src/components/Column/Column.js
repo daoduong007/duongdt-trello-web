@@ -13,9 +13,10 @@ import {
   saveContentAffterPressEnter,
   selectAllInlineText,
 } from 'utilities/contenEditable';
+import { createNewCard, updateColumn } from 'actions/ApiCall';
 
 function Column(props) {
-  const { column, onCardDrop, onUpdateColumn } = props;
+  const { column, onCardDrop, onUpdateColumnState } = props;
   const cards = mapOder(column.cards, column.cardOder, '_id');
 
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -39,17 +40,23 @@ function Column(props) {
   useEffect(() => {
     setColumnTitle(column.title);
   }, [column.title]);
+
+  //Remove column
   const onConfirmModalAction = (type) => {
     if (type === MODAL_ACTION_CONFIRM) {
       const newColumn = {
         ...column,
         _destroy: true,
       };
-      onUpdateColumn(newColumn);
+      //call api remove column
+      updateColumn(newColumn._id, newColumn).then((updatedColumn) => {
+        onUpdateColumnState(updatedColumn);
+      });
     }
     toggleShowConfirmModal();
   };
 
+  //Focus textarea new card
   useEffect(() => {
     if (newCardTextAreaRef && newCardTextAreaRef.current) {
       newCardTextAreaRef.current.focus();
@@ -57,14 +64,21 @@ function Column(props) {
     }
   }, [openNewCardForm]);
 
+  //Update column title
   function handleColumnTitleBlur() {
-    const newColumn = {
-      ...column,
-      title: columnTitle,
-    };
-    onUpdateColumn(newColumn);
+    if (column.title !== columnTitle) {
+      const newColumn = {
+        ...column,
+        title: columnTitle,
+      };
+      //call api update column
+      updateColumn(newColumn._id, newColumn).then((updatedColumn) => {
+        updatedColumn.cards = newColumn.cards;
+        onUpdateColumnState(updatedColumn);
+      });
+    }
   }
-
+  // Add new Card
   const addNewCard = () => {
     if (!newCardTitle) {
       newCardTextAreaRef.current.focus();
@@ -72,21 +86,22 @@ function Column(props) {
     }
 
     const newCardToAdd = {
-      id: Math.random().toString(36).substr(2, 5),
       boardId: column.boardId,
       columnId: column._id,
       title: newCardTitle.trim(),
-      cover: null,
     };
+    //call api add card
+    createNewCard(newCardToAdd).then((card) => {
+      let newColumn = cloneDeep(column);
+      newColumn.cards.push(card);
+      newColumn.cardOder.push(card._id);
 
-    let newColumn = cloneDeep(column);
-    newColumn.cards.push(newCardToAdd);
-    newColumn.cardOder.push(newCardToAdd._id);
-
-    onUpdateColumn(newColumn);
-    setNewCardTitle('');
-    toggleOpenNewCardForm();
+      onUpdateColumnState(newColumn);
+      setNewCardTitle('');
+      toggleOpenNewCardForm();
+    });
   };
+
   return (
     <div className='column'>
       <header className='column-drag-handle'>
