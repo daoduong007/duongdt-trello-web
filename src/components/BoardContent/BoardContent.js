@@ -240,7 +240,7 @@ function BoardContent() {
                 className='cancel-icon'
                 onClick={toggleOpenNewColumnForm}
               >
-                <i className='fa fa-trash icon' />
+                <i className='fa fa-window-close icon' />
               </span>
             </Col>
           </Row>

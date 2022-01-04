@@ -2,9 +2,77 @@
 
 .navbar-board {
   height: $navbar-board-height;
-  padding-left: $gap;
+  padding: 0 $gap 0 $gap;
   display: flex;
   align-items: center;
-  // background-color: $board-bg-color;
-  font-size: 1.1rem;
+  color: #f0f8ff;
+  .duongdt-trello-container {
+    max-width: 100%;
+
+    .app-actions {
+      display: inline-flex;
+      height: 100%;
+      width: 100%;
+      flex-direction: row;
+      align-items: center;
+      font-size: 16px;
+      div.divider {
+        padding: 0 8px;
+        margin-left: 4px;
+        &::before {
+          content: '|';
+          color: hsla(0, 0%, 100%, 0.5);
+        }
+      }
+      div.item {
+        padding: 0 $gap;
+        background-color: rgba(255, 255, 255, 0.3);
+        border-radius: 3px;
+        display: inline-flex;
+        flex-direction: row;
+        align-items: center;
+
+        &:not(:first-child) {
+          margin-left: 4px;
+        }
+        &:hover {
+          cursor: pointer;
+          background-color: rgba(255, 255, 255, 0.4);
+        }
+        p {
+          height: 15px;
+          padding: 6px 10px;
+        }
+      }
+    }
+
+    .user-actions {
+      display: inline-flex;
+      height: 100%;
+      width: 100%;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-end;
+      font-size: 16px;
+
+      div.item {
+        padding: 0 $gap;
+        background-color: rgba(255, 255, 255, 0.3);
+        border-radius: 3px;
+        margin-left: 4px;
+        display: inline-flex;
+        flex-direction: row;
+        align-items: center;
+
+        &:hover {
+          cursor: pointer;
+          background-color: rgba(255, 255, 255, 0.4);
+        }
+      }
+      p {
+        height: 15px;
+        padding: 6px 10px;
+      }
+    }
+  }
 }
